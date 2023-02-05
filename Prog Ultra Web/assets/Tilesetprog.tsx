@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.9" tiledversion="1.9.2" name="Placeholder mieux" tilewidth="32" tileheight="32" tilecount="4988" columns="86">
  <editorsettings>
-  <export target="" format="json"/>
+  <export target="Monniveau.json" format="json"/>
  </editorsettings>
  <image source="Tileset.png" width="2774" height="1858"/>
  <tile id="0">
   <properties>
+   <property name="Collect" type="bool" value="false"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -41,16 +42,19 @@
  </tile>
  <tile id="7">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="8">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="9">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -71,6 +75,7 @@
  </tile>
  <tile id="13">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="false"/>
   </properties>
  </tile>
@@ -441,16 +446,19 @@
  </tile>
  <tile id="93">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="94">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="95">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -471,6 +479,7 @@
  </tile>
  <tile id="99">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="false"/>
   </properties>
  </tile>
@@ -1241,26 +1250,31 @@
  </tile>
  <tile id="265">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="266">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="267">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="268">
   <properties>
+   <property name="pieces" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="269">
   <properties>
+   <property name="dossier" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -1281,11 +1295,13 @@
  </tile>
  <tile id="273">
   <properties>
+   <property name="bug" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="274">
   <properties>
+   <property name="bug" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -1641,16 +1657,19 @@
  </tile>
  <tile id="351">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="352">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="353">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -1681,11 +1700,13 @@
  </tile>
  <tile id="359">
   <properties>
+   <property name="bug" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="360">
   <properties>
+   <property name="bug" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -2441,16 +2462,19 @@
  </tile>
  <tile id="523">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="524">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="525">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
@@ -2841,16 +2865,19 @@
  </tile>
  <tile id="609">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="610">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="611">
   <properties>
+   <property name="eau" type="bool" value="true"/>
    <property name="solide" type="bool" value="true"/>
   </properties>
  </tile>

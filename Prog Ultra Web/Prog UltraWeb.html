@@ -14,7 +14,7 @@ benoit.darties@gmail.com
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Une carte créée avec Tiled, intégrée à Phaser 3</title>
+    <title>Ultra Web</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.50.0/dist/phaser.js"></script>
     <style type="text/css">
       body {
@@ -27,43 +27,88 @@ benoit.darties@gmail.com
       var config = {
         type: Phaser.AUTO,
         // les dimensions de l'écran
-        width: 1600,
-        height: 1600,
+        width: 600,
+        height: 300,
         physics: {
           default: "arcade",
           arcade: {
-            gravity: { y: 300 },
+            gravity: { y: 600 },
             debug: false
           }
         },
-        
+        input:{gamepad:true},
         scene: {
           preload: preload,
           create: create,
           update: update
         }
+        
       };
 
       // création du jeu
       var game = new Phaser.Game(config);
-      var cursors; // variable pour le clavier
+      var cursors; // variable pour le cursors
+      var gameOver
+      var controller = false
 
       function preload() {
         // chargement du personnage
-        this.load.spritesheet("dude", "assets/dude.png", {
+        this.load.spritesheet("dude", "assets/Polo.png", {
           frameWidth: 32,
-          frameHeight: 48
+          frameHeight: 64
         });
 
+        this.load.spritesheet("dudeglace", "assets/Pologlace.png", {
+          frameWidth: 32,
+          frameHeight: 64
+        });
+
+
+        this.load.spritesheet("virus", "assets/Ennemi spriteanim.png", {
+          frameWidth: 32,
+          frameHeight: 32,
+        });
+
+        this.load.spritesheet("bitcoin", "assets/bitcoin.png", {
+          frameWidth: 32,
+          frameHeight: 32,
+        });
+
+        this.load.spritesheet("dossier", "assets/dossier.png", {
+          frameWidth: 32,
+          frameHeight: 32,
+        });
+
+
+        this.load.spritesheet("click", "assets/click.png", {
+          frameWidth: 32,
+          frameHeight: 32,
+        });
 
         // chargement tuiles de jeu
         this.load.image("Phaser_Tileset", "assets/Tileset.png");
 
         // chargement de la carte
         this.load.tilemapTiledJSON("carte", "assets/Monniveau.json");
+
+        this.load.image("interfacefenetre", "assets/fenetre clean.png" );
+
+        this.load.image("interfacenormal", "assets/interface full.png" );
+
+        this.load.image("interfacedegats", "assets/interface degats.png" );
+
+
       }
 
+
+      var score=0
+      var scoretext
+      var PV=2
+      var protectionglace = 0
+
       function create() {
+        
+
         // chargement de la carte du niveau
         const carteDuNiveau = this.add.tilemap("carte");
         // chargement du jeu de tuiles
@@ -71,6 +116,8 @@ benoit.darties@gmail.com
           "Placeholder mieux",
           "Phaser_Tileset"
         );
+
+        
 
         // chargement du calque "calque_backgroung"
         const backgroundLayer = carteDuNiveau.createStaticLayer(
@@ -90,22 +137,177 @@ benoit.darties@gmail.com
           tileset
         );
 
-        // définition des objets solides avec lesquels le personnage va se cogner
+        // chargement du calque "bug" qui est le calque de piques
+        const bug = carteDuNiveau.createStaticLayer(
+          "bug",
+          tileset
+        );
+
+        //affichage de l'interface
+        this.add.image(120,75, "interfacefenetre").setScrollFactor(0);
+        this.add.image(120,75, "interfacenormal").setScrollFactor(0);
+        //affiche un texte à l’écran, pour le score
+        
+        scoreText=this.add.text(175,100,'0',{fontSize:'32px',fill:'#000'}).setScrollFactor(0);
+
+        
+        
+        
+
+        // définition des objets solides avec lesquels le personnage va interagir
         plateformes.setCollisionByProperty({ solide: true });
+        plateformes.setCollisionByProperty({ bug: true });
+        bug.setCollisionByProperty({ solide: true });
+        bug.setCollisionByProperty({ bug: true });
+        backgroundLayer2.setCollisionByProperty({ eau: true });
+
+
+
+
+
+
+
+        
+        
 
         
 
         // création du personnage de jeu et positionnement
-        player = this.physics.add.sprite(100, 400, "dude");
+        player = this.physics.add.sprite(100,1350,"dude");
         player.setBounce(0.2);
 
-        // ajout du modèle de collision entre le personnage et les plates-formes
+        // ajout des ennemis VIRUS qui ont comme pattern le déplacement opposé du joueur (axeX inversé)
+        virus = this.physics.add.sprite(400, 1410, "virus").setInteractive();
+        virus.setBounce(0.2);
+        
+
+        virus2 = this.physics.add.sprite(1400, 1500, "virus").setInteractive();;
+        virus2.setBounce(0.2);
+
+        virus3 = this.physics.add.sprite(1475, 500, "virus").setInteractive();;
+        virus3.setBounce(0.2);
+
+        virus4 = this.physics.add.sprite(550, 50, "virus").setInteractive();;
+        virus4.setBounce(0.2);
+
+        virus5 = this.physics.add.sprite(175, 400, "virus").setInteractive();;
+        virus5.setBounce(0.2);
+
+
+
+        // ajout de l'Item BITCOIN, si le joueur les récupère toutes, il y aura une surprise
+        bitcoin = this.physics.add.sprite(215, 1510, "bitcoin");
+        bitcoin.body.allowGravity = false
+
+        bitcoin2 = this.physics.add.sprite(1060, 1350, "bitcoin");
+        bitcoin2.body.allowGravity = false
+
+        bitcoin3 = this.physics.add.sprite(470, 1275, "bitcoin");
+        bitcoin3.body.allowGravity = false
+
+        bitcoin4 = this.physics.add.sprite(1245, 1275, "bitcoin");
+        bitcoin4.body.allowGravity = false
+
+        bitcoin5 = this.physics.add.sprite(1000, 550, "bitcoin");
+        bitcoin5.body.allowGravity = false
+
+        bitcoin6 = this.physics.add.sprite(1550, 500, "bitcoin");
+        bitcoin6.body.allowGravity = false
+
+        bitcoin7 = this.physics.add.sprite(1100, 100, "bitcoin");
+        bitcoin7.body.allowGravity = false
+
+        bitcoin8 = this.physics.add.sprite(125, 450, "bitcoin");
+        bitcoin8.body.allowGravity = false
+
+        bitcoin9 = this.physics.add.sprite(65, 600, "bitcoin");
+        bitcoin9.body.allowGravity = false
+
+        bitcoin10 = this.physics.add.sprite(500, 700, "bitcoin");
+        bitcoin10.body.allowGravity = false
+
+
+
+
+
+        // ajout de l'Item DOSSIER qui permettra de récupérer un point de vie
+        dossier = this.physics.add.sprite(600, 1550, "dossier");
+        dossier.body.allowGravity = false
+
+        dossier2 = this.physics.add.sprite(1490, 1355, "dossier");
+        dossier2.body.allowGravity = false
+
+        dossier3 = this.physics.add.sprite(1215, 880, "dossier");
+        dossier3.body.allowGravity = false
+
+        dossier4 = this.physics.add.sprite(500, 80, "dossier");
+        dossier4.body.allowGravity = false
+
+        dossier5 = this.physics.add.sprite(890, 350, "dossier");
+        dossier5.body.allowGravity = false
+
+        dossier6 = this.physics.add.sprite(995, 975, "dossier");
+        dossier6.body.allowGravity = false
+
+        
+
+
+        // ajout du power-up CLICK qui permettra de vaincre les ennemis
+        click = this.physics.add.sprite(950, 1370, "click");
+        click.body.allowGravity = false
+
+
+
+
+
+        // ajout du modèle de collision entre le personnage et les plates-formes et les ennemis et les piques
         this.physics.add.collider(player, plateformes);
+        this.physics.add.collider(virus, plateformes);
+        this.physics.add.collider(virus2, plateformes);
+        this.physics.add.collider(virus3, plateformes);
+        this.physics.add.collider(virus4, plateformes);
+        this.physics.add.collider(virus5, plateformes);
+        this.physics.add.collider(player, virus, degats, null, this);
+        this.physics.add.collider(player, virus2, degats, null, this);
+        this.physics.add.collider(player, virus3, degats, null, this);
+        this.physics.add.collider(player, virus4, degats, null, this);
+        this.physics.add.collider(player, virus5, degats, null, this);
+        this.physics.add.collider(player, bug, piques, null, this);
+        this.physics.add.collider(player, bitcoin, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin2, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin3, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin4, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin5, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin6, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin7, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin8, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin9, collectcoin, null, this);
+        this.physics.add.collider(player, bitcoin10, collectcoin, null, this);
+        this.physics.add.collider(player, dossier, soin, null, this);
+        this.physics.add.collider(player, dossier2, soin, null, this);
+        this.physics.add.collider(player, dossier3, soin, null, this);
+        this.physics.add.collider(player, dossier4, soin, null, this);
+        this.physics.add.collider(player, dossier5, soin, null, this);
+        this.physics.add.collider(player, dossier6, soin, null, this);
+        this.physics.add.collider(player, click, clickdelamort, null, this);
+
+        
+        
+        gameOver = false;
+
+ 
 
         // ajout du modèle de collision entre le personnage et le monde
         player.setCollideWorldBounds(true);
+        virus.setCollideWorldBounds(true);
+        virus2.setCollideWorldBounds(true);
+        virus3.setCollideWorldBounds(true);
+        virus4.setCollideWorldBounds(true);
+        virus5.setCollideWorldBounds(true);
+        
+        
 
-        // animation pour tourner à gauche
+        // animation du perso pour tourner à gauche
         this.anims.create({
           key: "left",
           frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
@@ -113,14 +315,14 @@ benoit.darties@gmail.com
           repeat: -1
         });
 
-        // animation lorsque le personnage n'avance pas
+        // animation du perso lorsque le personnage n'avance pas
         this.anims.create({
           key: "turn",
           frames: [{ key: "dude", frame: 4 }],
           frameRate: 20
         });
 
-        // animation pour tourner à droite
+        // animation du perso pour tourner à droite
         this.anims.create({
           key: "right",
           frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
@@ -128,8 +330,24 @@ benoit.darties@gmail.com
           repeat: -1
         });
 
-        // création d'un écouteur sur le clavier
+        // animation de l'ennemi
+        this.anims.create({
+          key: "leftv",
+          frames: this.anims.generateFrameNumbers("virus", { start: 0, end: 4 }),
+          frameRate: 10,
+          repeat: -1
+        });
+
+
+
+
+
+        // création d'un écouteur sur le cursors
         cursors = this.input.keyboard.createCursorKeys();
+
+        this.input.gamepad.once('connected', function (pad) {
+          controller = pad;
+        });
 
         // redimentionnement du monde avec les dimensions calculées via tiled
         this.physics.world.setBounds(0, 0, 1600, 1600);
@@ -139,25 +357,164 @@ benoit.darties@gmail.com
         this.cameras.main.startFollow(player); 
 
         
+
+        
       }
 
-      function update() {
-        // définitinon des mouvements du personnage
-
-        if (cursors.up.isDown) {
-          player.setVelocityY(-160);
-          // à droite
-        } else if (cursors.down.isDown) {
-          player.setVelocityY(160);
+      function soin(player, dossier){
+        if (PV >= 2){
+          dossier.disableBody(true, true);
+        }else{
+          dossier.disableBody(true, true);
+          this.add.image(120,75, "interfacenormal").setScrollFactor(0);
+          PV += 1
+          console.log("SOIN");
         }
+      }
+
+      function degats(player, virus){
+
+        
+        if (PV <= 0){
+          player.setTint(0xff0000);
+          player.anims.play('turn');
+          gameOver = true;
+        }else {
+          
+          PV -= 1
+          virus.disableBody(true, true); //Le virus disparait après 
+          this.add.image(120,75, "interfacedegats").setScrollFactor(0);
+        }
+       // if (player.setTint(0xff9797CC)){
+         // player.setTint()
+          //PV += 1
+        //} //else {
+          //PV -= 1
+          //virus.disableBody(true, true);
+        //}
+        
+        
+      }
+
+      function piques(player, bug){
+        
+          this.physics.pause();
+        player.setTint(0xff0000);
+        player.anims.play('turn');
+        gameOver = true;
+        
+      }
+
+      function collectcoin(player, bitcoin){
+        bitcoin.disableBody(true, true); // l’étoile disparaît
+        score += 1; //augmente le score de 10
+        scoreText.setText('' + score); //met à jour l’affichage du score
+      }
+
+      //Cette fonction permet de détruire un ennemi en cliquant dessus une fois un CLICK récupéré
+      //Le click permet de renforcer encore plus de lien entre le joueur et INTERNET, Ce qui est le but du niveau 
+      //Cela donne une approche plus originale dans un plateformer
+      function clickdelamort(player, click){
+        player.setTint(0xff9797CC);
+        click.disableBody(true, true);
+        if (player.setTint(0xff9797CC)){
+          virus.on('pointerdown', function (pointer) {
+
+            this.setTint(0xff0000);
+            virus.disableBody(true, true);
+            player.clearTint(0xff9797CC)
+            
+
+          });
+           }
+           if (player.setTint(0xff9797CC)){
+          virus2.on('pointerdown', function (pointer) {
+
+            this.setTint(0xff0000);
+            virus2.disableBody(true, true);
+            player.clearTint(0xff9797CC)
+            
+
+          });
+           }
+           if (player.setTint(0xff9797CC)){
+          virus3.on('pointerdown', function (pointer) {
+
+            this.setTint(0xff0000);
+            virus3.disableBody(true, true);
+            player.clearTint(0xff9797CC)
+            
+
+          });
+           }
+
+           if (player.setTint(0xff9797CC)){
+          virus4.on('pointerdown', function (pointer) {
+
+            this.setTint(0xff0000);
+            virus4.disableBody(true, true);
+            player.clearTint(0xff9797CC)
+            
+
+          });
+           }
+
+           if (player.setTint(0xff9797CC)){
+          virus5.on('pointerdown', function (pointer) {
+
+            this.setTint(0xff0000);
+            virus5.disableBody(true, true);
+            player.clearTint(0xff9797CC)
+            
+
+          });
+           }
+    }
+
+
+      
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      function update() {
+
+        if (gameOver){return;}
+
+          this.input.gamepad.once('connected', function (pad) {
+          // 'pad' is a reference to the gamepad that was just connected
+        });
+
+
+
+                
+
+
+
+        if (PV == 0){
+          this.physics.pause();
+        player.setTint(0xff0000);
+        player.anims.play('turn');
+        gameOver = true;
+        }
+        
 
         // a gauche
-        if (cursors.left.isDown) {
+        if (cursors.left.isDown || controller.left ) {
           player.setVelocityX(-160);
           player.anims.play("left", true);
 
           // à droite
-        } else if (cursors.right.isDown) {
+        } else if (cursors.right.isDown || controller.right ) {
           player.setVelocityX(160);
           player.anims.play("right", true);
         }
@@ -168,8 +525,146 @@ benoit.darties@gmail.com
         }
         // en saut (important : blocked doown au lieu de tuoching down)
         if (cursors.up.isDown && player.body.blocked.down) {
-          player.setVelocityY(-200);
+          player.setVelocityY(-100);
         }
+
+      
+
+        // a gauche pour l'ennemi
+        if (cursors.left.isDown || controller.left ) {
+          virus.setVelocityX(100);
+          virus.anims.play("leftv", true);
+
+          // à droite pour l'ennemi
+        } else if (cursors.right.isDown || controller.right ) {
+          virus.setVelocityX(-100);
+          virus.anims.play("leftv", true);
+        }else {
+          virus.setVelocityX(0);
+        }
+
+         // a gauche pour l'ennemi2
+         if (cursors.left.isDown || controller.left ) {
+          virus2.setVelocityX(100);
+          virus2.anims.play("leftv", true);
+
+          // à droite pour l'ennemi2
+        } else if (cursors.right.isDown || controller.right ) {
+          virus2.setVelocityX(-100);
+          virus2.anims.play("leftv", true);
+        }else {
+          virus2.setVelocityX(0);
+        }
+
+        // a gauche pour l'ennemi3
+        if (cursors.left.isDown || controller.left ) {
+          virus3.setVelocityX(100);
+          virus3.anims.play("leftv", true);
+
+          // à droite pour l'ennemi3
+        } else if (cursors.right.isDown || controller.right ) {
+          virus3.setVelocityX(-100);
+          virus3.anims.play("leftv", true);
+        }else {
+          virus3.setVelocityX(0);
+        }
+
+
+         // a gauche pour l'ennemi4
+         if (cursors.left.isDown || controller.left ) {
+          virus3.setVelocityX(100);
+          virus3.anims.play("leftv", true);
+
+          // à droite pour l'ennemi4
+        } else if (cursors.right.isDown || controller.right ) {
+          virus4.setVelocityX(-100);
+          virus4.anims.play("leftv", true);
+        }else {
+          virus4.setVelocityX(0);
+        }
+
+          // a gauche pour l'ennemi5
+        if (cursors.left.isDown || controller.left ) {
+          virus5.setVelocityX(100);
+          virus5.anims.play("leftv", true);
+
+          // à droite pour l'ennemi5
+        } else if (cursors.right.isDown || controller.right ) {
+          virus5.setVelocityX(-100);
+          virus5.anims.play("leftv", true);
+        }else {
+          virus5.setVelocityX(0);
+        }
+
+        
+
+
+        if ((cursors.up.isDown && player.body.blocked.down) || (cursors.up.isDown && this.onWall==true)){
+                    //si touche haut appuyée ET que le perso touche le sol
+                    player.setVelocityY(-300); //alors vitesse verticale négative
+/*
+
+fonction pour faire un recul sur le wall jump, marche pas actuellement
+
+                      // is the hero on a wall?
+                    if(this.onWall){
+  
+                        this.player.body.velocity.x = 200 * this.sens
+
+                    }
+*/
+                    // hero can't jump anymore
+                    this.canJump = false;
+
+                    // hero is not on the wall anymore
+                    this.onWall = false;
+                    
+
+
+
+
+                }
+
+                if (cursors.down.isDown && !player.body.touching.down){ //si la touche bas est appuyée en saut
+                    player.setVelocityY(450); 
+                } 
+
+                if(player.body.blocked.down){
+ 
+                    // hero can jump
+                    this.canJump = true;
+
+                    // hero not on the wall
+                    this.onWall = false;
+                }
+
+                if(player.body.blocked.right && player.body.blocked.down){
+ 
+                    // horizontal flipping hero sprite
+                    this.sens = -1;
+                }
+
+                if(player.body.blocked.right && !player.body.blocked.down){
+
+                    this.onWall = true;
+                }
+
+                if(player.body.blocked.left && player.body.blocked.down){
+                    sens = 1;
+                }
+
+                if(player.body.blocked.left && !player.body.blocked.down){
+                    this.onWall = true;
+                    
+                }
+                
+
+
+
+
+        
+
+
       }
     </script>
   </body>
