@@ -345,6 +345,7 @@ benoit.darties@gmail.com
         // création d'un écouteur sur le cursors
         cursors = this.input.keyboard.createCursorKeys();
 
+        // Pareil pour une manette
         this.input.gamepad.once('connected', function (pad) {
           controller = pad;
         });
@@ -358,7 +359,7 @@ benoit.darties@gmail.com
 
         
 
-        
+        //Si on récupère un dossier, on récupère un PV
       }
 
       function soin(player, dossier){
@@ -371,7 +372,6 @@ benoit.darties@gmail.com
           console.log("SOIN");
         }
       }
-
       function degats(player, virus){
 
         
@@ -381,17 +381,10 @@ benoit.darties@gmail.com
           gameOver = true;
         }else {
           
-          PV -= 1
+          PV -= 1//si le virus nous touche, on perd un PV
           virus.disableBody(true, true); //Le virus disparait après 
           this.add.image(120,75, "interfacedegats").setScrollFactor(0);
         }
-       // if (player.setTint(0xff9797CC)){
-         // player.setTint()
-          //PV += 1
-        //} //else {
-          //PV -= 1
-          //virus.disableBody(true, true);
-        //}
         
         
       }
@@ -499,7 +492,7 @@ benoit.darties@gmail.com
                 
 
 
-
+        //fonction du gameOver
         if (PV == 0){
           this.physics.pause();
         player.setTint(0xff0000);
@@ -602,17 +595,7 @@ benoit.darties@gmail.com
         if ((cursors.up.isDown && player.body.blocked.down) || (cursors.up.isDown && this.onWall==true)){
                     //si touche haut appuyée ET que le perso touche le sol
                     player.setVelocityY(-300); //alors vitesse verticale négative
-/*
 
-fonction pour faire un recul sur le wall jump, marche pas actuellement
-
-                      // is the hero on a wall?
-                    if(this.onWall){
-  
-                        this.player.body.velocity.x = 200 * this.sens
-
-                    }
-*/
                     // hero can't jump anymore
                     this.canJump = false;
 
